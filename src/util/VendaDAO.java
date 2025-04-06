@@ -14,7 +14,8 @@ public class VendaDAO {
     
     private final ConexaoDAO conexaoDAO = new ConexaoDAO();
     
-    public void inserir(Venda venda) {
+    // CREATE (Inserir Venda)
+    public void inserirVenda(Venda venda) {
         String sql = "INSERT INTO venda (data_venda, total, cliente_id, usuario_id) VALUES (?, ?, ?, ?)";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -29,7 +30,8 @@ public class VendaDAO {
         }
     }
     
-    public List<Venda> listar() {
+    // READ (Listar Venda)
+    public List<Venda> listarVenda() {
         List<Venda> vendas = new ArrayList<>();
         String sql = "SELECT * FROM venda";
         try (Connection conn = conexaoDAO.connectDB();
@@ -50,7 +52,8 @@ public class VendaDAO {
         return vendas;
     }
     
-    public void atualizar(Venda venda) {
+    // UPDATE (Atualizar Venda)
+    public void atualizarVenda(Venda venda) {
         String sql = "UPDATE venda SET data_venda = ?, total = ?, cliente_id = ?, usuario_id = ? WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,7 +69,8 @@ public class VendaDAO {
         }
     }
     
-    public void deletar(int id) {
+    // DELETE (Excluir Venda)
+    public void excluirVenda(int id) {
         String sql = "DELETE FROM venda WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

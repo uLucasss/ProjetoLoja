@@ -13,7 +13,8 @@ public class VendaProdutoDAO {
     
     private final ConexaoDAO conexaoDAO = new ConexaoDAO();
     
-    public void inserir(VendaProduto vendaProduto) {
+    // CREATE (Inserir VendaProduto)
+    public void inserirVendaProduto(VendaProduto vendaProduto) {
         String sql = "INSERT INTO venda_produto (venda_id, produto_id, quantidade) VALUES (?, ?, ?)";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -27,7 +28,8 @@ public class VendaProdutoDAO {
         }
     }
     
-    public List<VendaProduto> listar() {
+    // READ (Listar VendaProduto)
+    public List<VendaProduto> listarVendaProduto() {
         List<VendaProduto> vendaProdutos = new ArrayList<>();
         String sql = "SELECT * FROM venda_produto";
         try (Connection conn = conexaoDAO.connectDB();
@@ -46,7 +48,8 @@ public class VendaProdutoDAO {
         return vendaProdutos;
     }
     
-    public void atualizar(VendaProduto vendaProduto) {
+    // UPDATE (Atualizar VendaProduto)
+    public void atualizarVendaProduto(VendaProduto vendaProduto) {
         String sql = "UPDATE venda_produto SET quantidade = ? WHERE venda_id = ? AND produto_id = ?";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -60,7 +63,8 @@ public class VendaProdutoDAO {
         }
     }
     
-    public void deletar(int vendaId, int produtoId) {
+    // CREATE (Excluir VendaProduto)
+    public void excluirVendaProduto(int vendaId, int produtoId) {
         String sql = "DELETE FROM venda_produto WHERE venda_id = ? AND produto_id = ?";
         try (Connection conn = conexaoDAO.connectDB();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

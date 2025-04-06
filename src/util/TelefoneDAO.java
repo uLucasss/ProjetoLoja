@@ -13,6 +13,7 @@ public class TelefoneDAO {
     
     private final ConexaoDAO conexaoDAO = new ConexaoDAO();
     
+    // CREATE (Inserir Telefone)
     public void inserirTelefone(Telefone telefone) {
         String sql = "INSERT INTO telefone (numero, cliente_id, usuario_id) VALUES (?, ?, ?)";
         try (Connection conn = conexaoDAO.connectDB();
@@ -28,6 +29,7 @@ public class TelefoneDAO {
         
     }
     
+    // READ (Listar Telefone)
     public List<Telefone> listarTelefones() {
         List<Telefone> telefones = new ArrayList<>();
         String sql = "SELECT * FROM telefone";
@@ -48,6 +50,7 @@ public class TelefoneDAO {
         return telefones;
     }
     
+    // UPDATE (Atualizar Telefone)
     public void atualizarTelefone(Telefone telefone) {
         String sql = "UPDATE telefone SET numero = ?, cliente_id = ?, usuario_id = ? WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();
@@ -63,6 +66,7 @@ public class TelefoneDAO {
         }
     }
     
+    // DELETE (Excluir Telefone)
     public void excluirTelefone(int id) {
         String sql = "DELETE FROM telefone WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();

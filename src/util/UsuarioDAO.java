@@ -13,6 +13,7 @@ public class UsuarioDAO {
     
     private final ConexaoDAO conexaoDAO = new ConexaoDAO();
     
+    // CREATE (Inserir Usuário)
     public void inserirUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nome, cpf, endereco, login, senha, cargo_id) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = conexaoDAO.connectDB();
@@ -30,6 +31,7 @@ public class UsuarioDAO {
         }
     }
     
+    // READ (Listar Usuário)
     public List<Usuario> listarUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuario";
@@ -53,6 +55,7 @@ public class UsuarioDAO {
         return usuarios;
     }
     
+    // UPDATE (Atualizar Usuário)
     public void atualizarUsuario(Usuario usuario) {
         String sql = "UPDATE usuario SET nome = ?, cpf = ?, endereco = ?, login = ?, senha = ?, cargo_id = ? WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();
@@ -71,6 +74,7 @@ public class UsuarioDAO {
         }
     }
     
+    // DELETE (Excluir Usuário)
     public void excluirUsuario(int id) {
         String sql = "DELETE FROM usuario WHERE id = ?";
         try (Connection conn = conexaoDAO.connectDB();
