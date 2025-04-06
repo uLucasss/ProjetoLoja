@@ -7,17 +7,27 @@ import javax.swing.JOptionPane;
 
 public class ConexaoDAO {
     
-    public Connection connectDB(){
-        Connection conn = null;
-        
+    // Configuração (substitua pelos seus valores)
+    private static final String URL = "jdbc:mysql://localhost/lojadb";
+    private static final String USER = "root";
+    private static final String PASSWORD = "12345";
+    private static final String SSL = "?useSSL=false";
+    
+    public Connection connectDB() {
         try {
-        
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/uc11?user=root&password=12345&useSSL=false");
+            // Monta a URL completa
+            String urlCompleta = URL + SSL;
             
-        } catch (SQLException erro){
-            JOptionPane.showMessageDialog(null, "Erro ConectaDAO" + erro.getMessage());
+            // Estabelece a conexão
+            return DriverManager.getConnection(urlCompleta, USER, PASSWORD);
+            
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, 
+                "Erro ao conectar ao banco de dados:\n" + e.getMessage(),
+                "Erro de Conexão",
+                JOptionPane.ERROR_MESSAGE);
+            return null;
         }
-        return conn;
     }
     
     public void desconectar(Connection conn) {
@@ -26,7 +36,7 @@ public class ConexaoDAO {
                 conn.close();
             }
         } catch (SQLException ex) {
-            System.out.println("Nao foi possivel desconectar do banco dados.");
+            System.out.println("Erro ao desconectar: " + ex.getMessage());
         }
     }
 }
