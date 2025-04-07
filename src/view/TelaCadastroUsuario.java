@@ -225,7 +225,6 @@ public class TelaCadastroUsuario extends javax.swing.JFrame {
             TelaListagemUsuarios.instancia.atualizarTabela();
         }
 
-        // Fechar a tela de cadastro
         this.dispose();
 
         JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");

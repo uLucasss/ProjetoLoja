@@ -102,7 +102,7 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Nome", "Valor", "Quantidade"
             }
         ));
         jScrollPane1.setViewportView(tabelaProdutos);
@@ -191,7 +191,7 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
         if (linhaSelecionada != -1) {
             Produto produtoSelecionado = ProdutoDAO.getListaProdutos().get(linhaSelecionada);
 
-            // Abre a tela de edição passando o cliente
+            // Abre a tela de edição passando o produto
             new TelaEdicaoProduto(produtoSelecionado, linhaSelecionada).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um produto para editar.");

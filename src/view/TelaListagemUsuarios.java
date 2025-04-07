@@ -187,7 +187,7 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
         if (linhaSelecionada != -1) {
             Usuario usuarioSelecionado = UsuarioDAO.getListaUsuarios().get(linhaSelecionada);
 
-            // Abre a tela de edição passando o cliente
+            // Abre a tela de edição passando o usuário
             new TelaEdicaoUsuario(usuarioSelecionado, linhaSelecionada).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um usuário para editar.");

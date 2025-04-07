@@ -63,7 +63,7 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         });
 
         btnTelaVenda.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnTelaVenda.setText("Venda");
+        btnTelaVenda.setText("Venda(Em Breve)");
         btnTelaVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTelaVendaActionPerformed(evt);
@@ -102,7 +102,7 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
         });
 
         btnTelaListagemVendas.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnTelaListagemVendas.setText("Listagem das vendas");
+        btnTelaListagemVendas.setText("Lista das vendas(Em breve)");
         btnTelaListagemVendas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTelaListagemVendasActionPerformed(evt);
@@ -142,7 +142,7 @@ public class TelaMenuPrincipal extends javax.swing.JFrame {
                             .addComponent(btnTelaListagemProdutos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnTelaListagemClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnTelaListagemUsuarios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

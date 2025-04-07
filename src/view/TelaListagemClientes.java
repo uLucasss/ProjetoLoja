@@ -192,7 +192,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         int linhaSelecionada = tabelaClientes.getSelectedRow();
     
         if (linhaSelecionada != -1) {
-            // Exibir caixa de diálogo de confirmação
+            // Exibe caixa de diálogo de confirmação
             int confirmacao = JOptionPane.showConfirmDialog(this, 
                 "Tem certeza que deseja excluir este cliente?", "Confirmação", 
                 JOptionPane.YES_NO_OPTION);
