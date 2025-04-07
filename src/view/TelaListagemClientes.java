@@ -4,19 +4,52 @@
  */
 package view;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Cliente;
+import util.ClienteDAO;
+
 /**
  *
  * @author lucas
  */
 public class TelaListagemClientes extends javax.swing.JFrame {
 
+    public static TelaListagemClientes instancia; // Para acessar de outra classe
+    private ClienteDAO dao;
     /**
      * Creates new form TelaListagemClientes
      */
     public TelaListagemClientes() {
         initComponents();
+        dao = new ClienteDAO();
+        instancia = this;
+        atualizarTabela();
+    }
+    public void atualizarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaClientes.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Cliente> clientes = dao.listarClientes();
+        for (Cliente c : clientes) {
+            modelo.addRow(new Object[]{c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
+        }
     }
 
+    private void filtrarClientes() {
+        String filtro = txfFiltragem.getText().trim().toLowerCase();
+        DefaultTableModel modelo = (DefaultTableModel) tabelaClientes.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Cliente> clientes = ClienteDAO.getListaClientes();
+
+        for (Cliente c : clientes) {
+            if (c.getNome().toLowerCase().contains(filtro) || c.getCpf().contains(filtro)) {
+                modelo.addRow(new Object[]{c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -49,18 +82,39 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         tabelaClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nome", "CPF", "Telefone", "Endereço"
             }
         ));
         jScrollPane1.setViewportView(tabelaClientes);
+
+        txfFiltragem.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txfFiltragemCaretUpdate(evt);
+            }
+        });
+        txfFiltragem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txfFiltragemActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Procure pelo nome ou cpf do Cliente:");
 
@@ -133,6 +187,48 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         this.dispose();
         
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int linhaSelecionada = tabelaClientes.getSelectedRow();
+    
+        if (linhaSelecionada != -1) {
+            // Exibir caixa de diálogo de confirmação
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja excluir este cliente?", "Confirmação", 
+                JOptionPane.YES_NO_OPTION);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                ClienteDAO dao = new ClienteDAO();
+                dao.removerCliente(linhaSelecionada); // Remove o cliente da lista
+
+                atualizarTabela(); // Atualiza a tabela após remoção
+                JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um cliente para excluir.");
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int linhaSelecionada = tabelaClientes.getSelectedRow();
+    
+        if (linhaSelecionada != -1) {
+            Cliente clienteSelecionado = ClienteDAO.getListaClientes().get(linhaSelecionada);
+
+            // Abre a tela de edição passando o cliente
+            new TelaEdicaoCliente(clienteSelecionado, linhaSelecionada).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um cliente para editar.");
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void txfFiltragemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txfFiltragemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txfFiltragemActionPerformed
+
+    private void txfFiltragemCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txfFiltragemCaretUpdate
+        filtrarClientes();
+    }//GEN-LAST:event_txfFiltragemCaretUpdate
 
     /**
      * @param args the command line arguments

@@ -4,6 +4,9 @@
  */
 package view;
 
+import model.Cliente;
+import util.ClienteDAO;
+
 /**
  *
  * @author lucas
@@ -165,9 +168,20 @@ public class TelaCadastroCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
-        
-        
+        String nome = txfNome.getText();
+        String cpf = txfCpf.getText();
+        String telefone = txfTelefone.getText();
+        String endereco = txfEndereco.getText();
+
+        Cliente novoCliente = new Cliente(nome, cpf, telefone, endereco);
+        ClienteDAO dao = new ClienteDAO();
+        dao.adicionarCliente(novoCliente);
+
+        // Atualiza a tabela na TelaListagemClientes (se já estiver aberta)
+        if (TelaListagemClientes.instancia != null) {
+            TelaListagemClientes.instancia.atualizarTabela();
+        }
+
         this.dispose();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 

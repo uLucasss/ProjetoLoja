@@ -4,17 +4,32 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
+import model.Cliente;
+import util.ClienteDAO;
+
 /**
  *
  * @author lucas
  */
 public class TelaEdicaoCliente extends javax.swing.JFrame {
-
+    private Cliente cliente;
+    private int indice;
     /**
      * Creates new form TelaEdicaoCliente
      */
-    public TelaEdicaoCliente() {
+    public TelaEdicaoCliente(Cliente cliente, int indice) {
+        this.cliente = cliente;
+        this.indice = indice;
+        
         initComponents();
+        preencherCampos();
+    }
+    private void preencherCampos() {
+        txfNome.setText(cliente.getNome());
+        txfCpf.setText(cliente.getCpf());
+        txfTelefone.setText(cliente.getTelefone());
+        txfEndereco.setText(cliente.getEndereco());
     }
 
     /**
@@ -49,6 +64,11 @@ public class TelaEdicaoCliente extends javax.swing.JFrame {
 
         btnSalvar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Nome:");
 
@@ -160,40 +180,24 @@ public class TelaEdicaoCliente extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnVoltarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaEdicaoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaEdicaoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaEdicaoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaEdicaoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        // Atualiza os dados do cliente
+        cliente.setNome(txfNome.getText());
+        cliente.setCpf(txfCpf.getText());
+        cliente.setTelefone(txfTelefone.getText());
+        cliente.setEndereco(txfEndereco.getText());
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TelaEdicaoCliente().setVisible(true);
-            }
-        });
-    }
+        // Atualiza na lista
+        ClienteDAO.getListaClientes().set(indice, cliente);
+
+        // Atualiza a tabela na tela de listagem
+        if (TelaListagemClientes.instancia != null) {
+            TelaListagemClientes.instancia.atualizarTabela();
+        }
+
+        JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+        this.dispose();
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvar;

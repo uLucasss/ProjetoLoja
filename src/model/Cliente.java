@@ -7,19 +7,26 @@ public class Cliente {
     private String nome;
     private String cpf;
     private String endereco;
-    private List<Telefone> telefones;
+    private String telefone;
     private List<Venda> vendas;
 
     // Contrutores
     public Cliente() {
     }
 
-    public Cliente(int id, String nome, String cpf, String endereco, List<Telefone> telefones, List<Venda> vendas) {
+    public Cliente(String nome, String cpf, String telefone, String endereco) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.telefone = telefone;
+        this.endereco = endereco;
+    }
+    
+    public Cliente(int id, String nome, String cpf, String endereco, String telefone, List<Venda> vendas) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
-        this.telefones = telefones;
+        this.telefone = telefone;
         this.vendas = vendas;
     }
 
@@ -56,12 +63,12 @@ public class Cliente {
         this.endereco = endereco;
     }
 
-    public List<Telefone> getTelefones() {
-        return telefones;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setTelefones(List<Telefone> telefones) {
-        this.telefones = telefones;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public List<Venda> getVendas() {
