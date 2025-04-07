@@ -1,39 +1,32 @@
 package model;
 
-import java.util.List;
-
 public class Usuario {
+    private static int contadorId = 1; // Contador para gerar IDs automaticamente
     private int id;
     private String nome;
     private String cpf;
+    private String telefone;
     private String endereco;
     private String login;
     private String senha;
-    private int cargoId;
-    private Cargo cargo;
-    private List<Telefone> telefones;
-    private List<Venda> vendas;
-    private List<Salario> salarios;
-
+    private String cargo;
+ 
     // Construtores
     public Usuario() {
     }
 
-    public Usuario(int id, String nome, String cpf, String endereco, String login, String senha, int cargoId, Cargo cargo, List<Telefone> telefones, List<Venda> vendas, List<Salario> salarios) {
-        this.id = id;
+    public Usuario(String nome, String cpf, String telefone, String endereco, String login, String senha, String cargo) {
+        this.id = contadorId++; // Gera um ID único
         this.nome = nome;
         this.cpf = cpf;
+        this.telefone = telefone;
         this.endereco = endereco;
         this.login = login;
         this.senha = senha;
-        this.cargoId = cargoId;
         this.cargo = cargo;
-        this.telefones = telefones;
-        this.vendas = vendas;
-        this.salarios = salarios;
     }
-
-    // Getters and Setters
+    
+    // Getters and Setters  
     public int getId() {
         return id;
     }
@@ -56,6 +49,14 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getEndereco() {
@@ -82,45 +83,12 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public int getCargoId() {
-        return cargoId;
-    }
-
-    public void setCargoId(int cargoId) {
-        this.cargoId = cargoId;
-    }
-
-    public Cargo getCargo() {
+    public String getCargo() {
         return cargo;
     }
 
-    public void setCargo(Cargo cargo) {
+    public void setCargo(String cargo) {
         this.cargo = cargo;
     }
-
-    public List<Telefone> getTelefones() {
-        return telefones;
-    }
-
-    public void setTelefones(List<Telefone> telefones) {
-        this.telefones = telefones;
-    }
-
-    public List<Venda> getVendas() {
-        return vendas;
-    }
-
-    public void setVendas(List<Venda> vendas) {
-        this.vendas = vendas;
-    }
-
-    public List<Salario> getSalarios() {
-        return salarios;
-    }
-
-    public void setSalarios(List<Salario> salarios) {
-        this.salarios = salarios;
-    }
-    
     
 }

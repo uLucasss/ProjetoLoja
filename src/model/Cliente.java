@@ -3,31 +3,24 @@ package model;
 import java.util.List;
 
 public class Cliente {
+    private static int contadorId = 1;
     private int id;
     private String nome;
     private String cpf;
     private String endereco;
     private String telefone;
-    private List<Venda> vendas;
 
     // Contrutores
     public Cliente() {
     }
 
-    public Cliente(String nome, String cpf, String telefone, String endereco) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.endereco = endereco;
-    }
     
-    public Cliente(int id, String nome, String cpf, String endereco, String telefone, List<Venda> vendas) {
-        this.id = id;
+    public Cliente(String nome, String cpf, String endereco, String telefone) {
+        this.id = contadorId++;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;
         this.telefone = telefone;
-        this.vendas = vendas;
     }
 
     // Getters and Setters
@@ -69,14 +62,6 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public List<Venda> getVendas() {
-        return vendas;
-    }
-
-    public void setVendas(List<Venda> vendas) {
-        this.vendas = vendas;
     }
      
 }

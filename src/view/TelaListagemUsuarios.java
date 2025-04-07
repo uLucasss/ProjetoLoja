@@ -1,8 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Usuario;
+import util.UsuarioDAO;
 
 /**
  *
@@ -10,13 +12,42 @@ package view;
  */
 public class TelaListagemUsuarios extends javax.swing.JFrame {
 
-    /**
-     * Creates new form TelaListagemUsuarios
-     */
+    public static TelaListagemUsuarios instancia; // Para acessar de outra classe
+    private UsuarioDAO dao;
+   
     public TelaListagemUsuarios() {
         initComponents();
+        dao = new UsuarioDAO();
+        instancia = this;
+        atualizarTabela();
+    }
+    
+    public void atualizarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaUsuarios.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Usuario> usuarios = dao.listarUsuarios();
+        for (Usuario u : usuarios) {
+            modelo.addRow(new Object[]{u.getId(), u.getNome(), u.getCpf(), u.getTelefone(), u.getEndereco(), u.getLogin(), u.getCargo()});
+        }
     }
 
+    private void filtrarUsuarios() {
+        String filtro = txfFiltragem.getText().trim().toLowerCase();
+        DefaultTableModel modelo = (DefaultTableModel) tabelaUsuarios.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Usuario> usuarios = UsuarioDAO.getListaUsuarios();
+
+        for (Usuario u : usuarios) {
+            if (u.getNome().toLowerCase().contains(filtro) || u.getCpf().contains(filtro)) {
+                modelo.addRow(new Object[]{u.getId(), u.getNome(), u.getCpf(), u.getTelefone(), u.getEndereco(), u.getLogin(), u.getCargo()});
+            }
+        }
+    }
+    
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,11 +63,11 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaUsuarios = new javax.swing.JTable();
-        txfFiltragem = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        txfFiltragem = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -49,15 +80,25 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
         });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         tabelaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Nome", "CPF", "Telefone", "Endereço", "Usuário", "Cargo"
             }
         ));
         jScrollPane1.setViewportView(tabelaUsuarios);
@@ -66,6 +107,12 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setText("Lista de Usuários");
+
+        txfFiltragem.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txfFiltragemCaretUpdate(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -84,8 +131,8 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -98,7 +145,7 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -133,6 +180,43 @@ public class TelaListagemUsuarios extends javax.swing.JFrame {
         this.dispose();
         
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int linhaSelecionada = tabelaUsuarios.getSelectedRow();
+    
+        if (linhaSelecionada != -1) {
+            Usuario usuarioSelecionado = UsuarioDAO.getListaUsuarios().get(linhaSelecionada);
+
+            // Abre a tela de edição passando o cliente
+            new TelaEdicaoUsuario(usuarioSelecionado, linhaSelecionada).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um usuário para editar.");
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int linhaSelecionada = tabelaUsuarios.getSelectedRow();
+        
+        if (linhaSelecionada != -1) {
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja excluir este usuário?", "Confirmação", 
+                JOptionPane.YES_NO_OPTION);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                dao.removerUsuario(linhaSelecionada);
+                
+                atualizarTabela();
+                
+                JOptionPane.showMessageDialog(this, "Usuário excluído com sucesso!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um usuário para excluir.");
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void txfFiltragemCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txfFiltragemCaretUpdate
+        filtrarUsuarios();
+    }//GEN-LAST:event_txfFiltragemCaretUpdate
 
     /**
      * @param args the command line arguments

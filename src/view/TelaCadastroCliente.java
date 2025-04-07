@@ -4,6 +4,7 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
 import model.Cliente;
 import util.ClienteDAO;
 
@@ -42,7 +43,7 @@ public class TelaCadastroCliente extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
         btnCadastrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -183,6 +184,8 @@ public class TelaCadastroCliente extends javax.swing.JFrame {
         }
 
         this.dispose();
+        
+        JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     /**

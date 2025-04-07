@@ -33,7 +33,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
 
         List<Cliente> clientes = dao.listarClientes();
         for (Cliente c : clientes) {
-            modelo.addRow(new Object[]{c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
+            modelo.addRow(new Object[]{c.getId(),c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
         }
     }
 
@@ -46,7 +46,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
 
         for (Cliente c : clientes) {
             if (c.getNome().toLowerCase().contains(filtro) || c.getCpf().contains(filtro)) {
-                modelo.addRow(new Object[]{c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
+                modelo.addRow(new Object[]{c.getId(),c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
             }
         }
     }
@@ -69,7 +69,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -100,7 +100,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "CPF", "Telefone", "Endereço"
+                "ID", "Nome", "CPF", "Telefone", "Endereço"
             }
         ));
         jScrollPane1.setViewportView(tabelaClientes);
@@ -197,8 +197,7 @@ public class TelaListagemClientes extends javax.swing.JFrame {
                 "Tem certeza que deseja excluir este cliente?", "Confirmação", 
                 JOptionPane.YES_NO_OPTION);
 
-            if (confirmacao == JOptionPane.YES_OPTION) {
-                ClienteDAO dao = new ClienteDAO();
+            if (confirmacao == JOptionPane.YES_OPTION) {                
                 dao.removerCliente(linhaSelecionada); // Remove o cliente da lista
 
                 atualizarTabela(); // Atualiza a tabela após remoção

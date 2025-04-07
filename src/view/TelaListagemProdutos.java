@@ -4,17 +4,52 @@
  */
 package view;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.Produto;
+import util.ProdutoDAO;
+
 /**
  *
  * @author lucas
  */
 public class TelaListagemProdutos extends javax.swing.JFrame {
+    
+    public static TelaListagemProdutos instancia; // Para acessar de outra classe
+    private ProdutoDAO dao;
 
     /**
      * Creates new form TelaListagemProdutos
      */
     public TelaListagemProdutos() {
         initComponents();
+        dao = new ProdutoDAO();
+        instancia = this;
+        atualizarTabela();
+    }
+    public void atualizarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Produto> usuarios = dao.listarProdutos();
+        for (Produto u : usuarios) {
+            modelo.addRow(new Object[]{u.getId(), u.getNome(), u.getPreco(), u.getEstoque()});
+        }
+    }
+
+    private void filtrarProdutos() {
+        String filtro = txfFiltragem.getText().trim().toLowerCase();
+        DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
+        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+        List<Produto> produtos = ProdutoDAO.getListaProdutos();
+
+        for (Produto p : produtos) {
+            if (p.getNome().toLowerCase().contains(filtro) || String.valueOf(p.getId()).contains(filtro)) {
+                modelo.addRow(new Object[]{p.getId(), p.getNome(), p.getPreco(), p.getEstoque()});
+            }
+        }
     }
 
     /**
@@ -32,11 +67,11 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaProdutos = new javax.swing.JTable();
-        txfFiltragem = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        txfFiltragem = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -49,8 +84,18 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
         });
 
         btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
         btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         tabelaProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -66,6 +111,12 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
         jLabel2.setText("Lista de Produtos");
+
+        txfFiltragem.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txfFiltragemCaretUpdate(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -84,8 +135,8 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(jLabel2)
+                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -133,6 +184,43 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
         this.dispose();
         
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        int linhaSelecionada = tabelaProdutos.getSelectedRow();
+    
+        if (linhaSelecionada != -1) {
+            Produto produtoSelecionado = ProdutoDAO.getListaProdutos().get(linhaSelecionada);
+
+            // Abre a tela de edição passando o cliente
+            new TelaEdicaoProduto(produtoSelecionado, linhaSelecionada).setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um produto para editar.");
+        }
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int linhaSelecionada = tabelaProdutos.getSelectedRow();
+        
+        if (linhaSelecionada != -1) {
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja excluir este produto?", "Confirmação", 
+                JOptionPane.YES_NO_OPTION);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                dao.removerProduto(linhaSelecionada);
+                
+                atualizarTabela();
+                
+                JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione um produto para excluir.");
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void txfFiltragemCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txfFiltragemCaretUpdate
+        filtrarProdutos();
+    }//GEN-LAST:event_txfFiltragemCaretUpdate
 
     /**
      * @param args the command line arguments

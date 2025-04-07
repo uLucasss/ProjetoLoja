@@ -4,6 +4,10 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
+import model.Produto;
+import util.ProdutoDAO;
+
 /**
  *
  * @author lucas
@@ -37,7 +41,7 @@ public class TelaCadastroProduto extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
         btnCadastrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -159,10 +163,42 @@ public class TelaCadastroProduto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-       
+        // Coletar dados dos campos (substitua pelos seus componentes reais)
+        String nome = txfNome.getText();
+        String precoStr = txfPreco.getText().trim();
+        String quantidadeStr = txfQuantidade.getText().trim();
+
         
-        
-        this.dispose();
+
+        // Validar campos obrigatórios
+        if (nome.isEmpty() || precoStr.isEmpty() || quantidadeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios!");
+            return;
+        }
+
+        try {
+            double preco = Double.parseDouble(precoStr);
+            int quantidade = Integer.parseInt(quantidadeStr);
+
+            // Criar novo produto
+            Produto novoProduto = new Produto(nome, preco, quantidade);
+
+            // Adicionar ao DAO
+            ProdutoDAO dao = new ProdutoDAO();
+            dao.adicionarProduto(novoProduto);
+
+            // Atualizar tabela na tela de listagem
+            if (TelaListagemProdutos.instancia != null) {
+                TelaListagemProdutos.instancia.atualizarTabela();
+            }
+
+            // Fechar a tela de cadastro
+            this.dispose();
+
+            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Insira valores numéricos válidos para preço e quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     /**

@@ -1,24 +1,22 @@
 package model;
 
-import java.util.List;
-
 public class Produto {
+    private static int contadorId = 1;
     private int id;
     private String nome;
     private double preco;
-    private List<Estoque> estoques;
-    private List<VendaProduto> vendaProdutos;
+    private int estoque;
+
 
     // Construtores
     public Produto() {
     }
 
-    public Produto(int id, String nome, double preco, List<Estoque> estoques, List<VendaProduto> vendaProdutos) {
-        this.id = id;
+    public Produto(String nome, double preco, int estoque) {
+        this.id = contadorId++;
         this.nome = nome;
         this.preco = preco;
-        this.estoques = estoques;
-        this.vendaProdutos = vendaProdutos;
+        this.estoque = estoque;
     }
     
     // Getters and Setters
@@ -46,20 +44,12 @@ public class Produto {
         this.preco = preco;
     }
 
-    public List<Estoque> getEstoques() {
-        return estoques;
+    public int getEstoque() {
+        return estoque;
     }
 
-    public void setEstoques(List<Estoque> estoques) {
-        this.estoques = estoques;
-    }
-
-    public List<VendaProduto> getVendaProdutos() {
-        return vendaProdutos;
-    }
-
-    public void setVendaProdutos(List<VendaProduto> vendaProdutos) {
-        this.vendaProdutos = vendaProdutos;
-    }
+    public void setEstoque(int estoque) {
+        this.estoque = estoque;
+    }  
     
 }
