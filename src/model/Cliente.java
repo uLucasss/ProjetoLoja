@@ -1,9 +1,6 @@
 package model;
 
-import java.util.List;
-
 public class Cliente {
-    private static int contadorId = 1;
     private int id;
     private String nome;
     private String cpf;
@@ -16,7 +13,6 @@ public class Cliente {
 
     
     public Cliente(String nome, String cpf, String endereco, String telefone) {
-        this.id = contadorId++;
         this.nome = nome;
         this.cpf = cpf;
         this.endereco = endereco;

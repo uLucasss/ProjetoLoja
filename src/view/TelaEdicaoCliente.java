@@ -14,22 +14,21 @@ import util.ClienteDAO;
  */
 public class TelaEdicaoCliente extends javax.swing.JFrame {
     private Cliente cliente;
-    private int indice;
     /**
      * Creates new form TelaEdicaoCliente
      */
-    public TelaEdicaoCliente(Cliente cliente, int indice) {
+    public TelaEdicaoCliente(Cliente cliente) {
         this.cliente = cliente;
-        this.indice = indice;
-        
         initComponents();
         preencherCampos();
+
     }
+
     private void preencherCampos() {
         txfNome.setText(cliente.getNome());
         txfCpf.setText(cliente.getCpf());
-        txfTelefone.setText(cliente.getTelefone());
         txfEndereco.setText(cliente.getEndereco());
+        txfTelefone.setText(cliente.getTelefone());
     }
 
     /**
@@ -181,22 +180,39 @@ public class TelaEdicaoCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // Atualiza os dados do cliente
-        cliente.setNome(txfNome.getText());
-        cliente.setCpf(txfCpf.getText());
-        cliente.setTelefone(txfTelefone.getText());
-        cliente.setEndereco(txfEndereco.getText());
+        // Validação dos campos
+        if (txfNome.getText().trim().isEmpty() || 
+            txfCpf.getText().trim().isEmpty() || 
+            txfTelefone.getText().trim().isEmpty() || 
+            txfEndereco.getText().trim().isEmpty()) {
 
-        // Atualiza na lista
-        ClienteDAO.getListaClientes().set(indice, cliente);
-
-        // Atualiza a tabela na tela de listagem
-        if (TelaListagemClientes.instancia != null) {
-            TelaListagemClientes.instancia.atualizarTabela();
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos!", 
+                "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
-        this.dispose();
+        // Atualiza os dados do cliente
+        cliente.setNome(txfNome.getText().trim());
+        cliente.setCpf(txfCpf.getText().trim());
+        cliente.setTelefone(txfTelefone.getText().trim());
+        cliente.setEndereco(txfEndereco.getText().trim());
+
+        // Cria uma instância do DAO
+        ClienteDAO clienteDAO = new ClienteDAO();
+
+        // Atualiza no banco de dados
+        if (clienteDAO.atualizarCliente(cliente)) {
+            // Atualiza a tabela na tela de listagem
+            if (TelaListagemClientes.instancia != null) {
+                TelaListagemClientes.instancia.atualizarTabela();
+            }
+
+            JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente!", 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

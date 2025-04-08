@@ -169,23 +169,51 @@ public class TelaCadastroCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        String nome = txfNome.getText();
-        String cpf = txfCpf.getText();
-        String telefone = txfTelefone.getText();
-        String endereco = txfEndereco.getText();
+        try {
+            // Obter os dados dos campos de texto
+            String nome = txfNome.getText().trim();
+            String cpf = txfCpf.getText().trim();
+            String endereco = txfEndereco.getText().trim();
+            String telefone = txfTelefone.getText().trim();
 
-        Cliente novoCliente = new Cliente(nome, cpf, telefone, endereco);
-        ClienteDAO dao = new ClienteDAO();
-        dao.adicionarCliente(novoCliente);
+            // Validar os dados
+            if (nome.isEmpty() || cpf.isEmpty() || endereco.isEmpty() || telefone.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Preencha todos os campos!", 
+                        "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        // Atualiza a tabela na TelaListagemClientes (se já estiver aberta)
-        if (TelaListagemClientes.instancia != null) {
-            TelaListagemClientes.instancia.atualizarTabela();
+            // Criar objeto Cliente
+            Cliente novoCliente = new Cliente(nome, cpf, endereco, telefone);
+
+            // Cadastrar no banco de dados
+            ClienteDAO dao = new ClienteDAO();
+            if (dao.cadastrarCliente(novoCliente)) {
+                JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!", 
+                        "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+                // Limpar os campos após cadastro
+                txfNome.setText("");
+                txfCpf.setText("");
+                txfEndereco.setText("");
+                txfTelefone.setText("");
+
+                // Atualizar a tabela na tela de listagem (se estiver aberta)
+                if (TelaListagemClientes.instancia != null) {
+                    TelaListagemClientes.instancia.atualizarTabela();
+                }
+
+                // Fechar a janela atual
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente!", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocorreu um erro inesperado: " + e.getMessage(), 
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-
-        this.dispose();
-        
-        JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     /**

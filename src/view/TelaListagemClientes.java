@@ -42,11 +42,17 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tabelaClientes.getModel();
         modelo.setRowCount(0); // Limpa a tabela antes de atualizar
 
-        List<Cliente> clientes = ClienteDAO.getListaClientes();
+        List<Cliente> clientes = dao.listarClientes();
 
         for (Cliente c : clientes) {
-            if (c.getNome().toLowerCase().contains(filtro) || c.getCpf().contains(filtro)) {
-                modelo.addRow(new Object[]{c.getId(),c.getNome(), c.getCpf(), c.getTelefone(), c.getEndereco()});
+        if (c.getNome().toLowerCase().contains(filtro) || c.getCpf().contains(filtro)) {
+            modelo.addRow(new Object[]{
+                c.getId(),
+                c.getNome(), 
+                c.getCpf(), 
+                c.getTelefone(), 
+                c.getEndereco()
+                });
             }
         }
     }
@@ -192,16 +198,23 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         int linhaSelecionada = tabelaClientes.getSelectedRow();
     
         if (linhaSelecionada != -1) {
+            // Obtém o ID do cliente da linha selecionada
+            int idCliente = (int) tabelaClientes.getValueAt(linhaSelecionada, 0);
+
             // Exibe caixa de diálogo de confirmação
             int confirmacao = JOptionPane.showConfirmDialog(this, 
                 "Tem certeza que deseja excluir este cliente?", "Confirmação", 
                 JOptionPane.YES_NO_OPTION);
 
-            if (confirmacao == JOptionPane.YES_OPTION) {                
-                dao.removerCliente(linhaSelecionada); // Remove o cliente da lista
-
-                atualizarTabela(); // Atualiza a tabela após remoção
-                JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                // Remove o cliente do banco de dados
+                if (dao.excluirCliente(idCliente)) {
+                    atualizarTabela(); // Atualiza a tabela após remoção
+                    JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao excluir cliente.", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um cliente para excluir.");
@@ -212,10 +225,19 @@ public class TelaListagemClientes extends javax.swing.JFrame {
         int linhaSelecionada = tabelaClientes.getSelectedRow();
     
         if (linhaSelecionada != -1) {
-            Cliente clienteSelecionado = ClienteDAO.getListaClientes().get(linhaSelecionada);
+            // Obtém o ID do cliente da linha selecionada
+            int idCliente = (int) tabelaClientes.getValueAt(linhaSelecionada, 0);
 
-            // Abre a tela de edição passando o cliente
-            new TelaEdicaoCliente(clienteSelecionado, linhaSelecionada).setVisible(true);
+            // Busca o cliente completo no banco de dados
+            Cliente clienteSelecionado = dao.buscarClientePorId(idCliente);
+
+            if (clienteSelecionado != null) {
+                // Abre a tela de edição passando o cliente
+                new TelaEdicaoCliente(clienteSelecionado).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Cliente não encontrado.", 
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um cliente para editar.");
         }

@@ -1,25 +1,23 @@
 package model;
 
 public class Produto {
-    private static int contadorId = 1;
     private int id;
     private String nome;
     private double preco;
-    private int estoque;
+    private Estoque estoque; // Agregação com Estoque
 
-
-    // Construtores
     public Produto() {
     }
 
-    public Produto(String nome, double preco, int estoque) {
-        this.id = contadorId++;
+    // Construtor com estoque
+    public Produto(int id, String nome, double preco, Estoque estoque) {
+        this.id = id;
         this.nome = nome;
         this.preco = preco;
         this.estoque = estoque;
     }
-    
-    // Getters and Setters
+
+    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -44,12 +42,12 @@ public class Produto {
         this.preco = preco;
     }
 
-    public int getEstoque() {
+    public Estoque getEstoque() {
         return estoque;
     }
 
-    public void setEstoque(int estoque) {
+    public void setEstoque(Estoque estoque) {
         this.estoque = estoque;
-    }  
-    
+    }
+
 }

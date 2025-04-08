@@ -5,6 +5,7 @@
 package view;
 
 import javax.swing.JOptionPane;
+import model.Estoque;
 import model.Produto;
 import util.ProdutoDAO;
 
@@ -14,23 +15,27 @@ import util.ProdutoDAO;
  */
 public class TelaEdicaoProduto extends javax.swing.JFrame {
     private Produto produto;
-    private int indice;
 
     /**
      * Creates new form TelaEdicaoProduto
      */
-    public TelaEdicaoProduto(Produto produto, int indice) {
-        this.produto = produto;
-        this.indice = indice;
-        
+    public TelaEdicaoProduto(Produto produto) {
+        this.produto = produto;       
         initComponents();      
         preencherCampos();
     }
+    
     private void preencherCampos() {
-        // Preencher os campos com os dados do usuário   
+        // Preencher os campos com os dados do produto
         txfNome.setText(produto.getNome());
-        txfPreco.setText(String.valueOf(produto.getPreco())); 
-        txfQuantidade.setText(String.valueOf(produto.getEstoque()));
+        txfPreco.setText(String.valueOf(produto.getPreco()));
+
+        // Preencher a quantidade do estoque (se existir)
+        if (produto.getEstoque() != null) {
+            txfQuantidade.setText(String.valueOf(produto.getEstoque().getQuantidadeEstoque()));
+        } else {
+            txfQuantidade.setText("0"); // Ou deixar vazio ""
+        }
     }
    
     /**
@@ -175,20 +180,47 @@ public class TelaEdicaoProduto extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVoltarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        produto.setNome(txfNome.getText());
-        produto.setPreco(Double.parseDouble(txfPreco.getText())); 
-        produto.setEstoque(Integer.parseInt(txfQuantidade.getText())); 
+        // Validação dos campos
+        if (txfNome.getText().trim().isEmpty() || 
+            txfPreco.getText().trim().isEmpty() || 
+            txfQuantidade.getText().trim().isEmpty()) {
 
-        // Atualiza na lista
-        ProdutoDAO.getListaProdutos().set(indice, produto);
-
-        // Atualiza a tabela na tela de listagem
-        if (TelaListagemProdutos.instancia != null) {
-            TelaListagemProdutos.instancia.atualizarTabela();
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos!", 
+                "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        JOptionPane.showMessageDialog(this, "Produto atualizado com sucesso!");
-        this.dispose();
+        try {
+            // Atualiza os dados do produto
+            produto.setNome(txfNome.getText().trim());
+            produto.setPreco(Double.parseDouble(txfPreco.getText().trim()));
+
+            // Atualiza o estoque (cria se não existir)
+            if (produto.getEstoque() == null) {
+                produto.setEstoque(new Estoque());
+            }
+            produto.getEstoque().setQuantidadeEstoque(Integer.parseInt(txfQuantidade.getText().trim()));
+
+            // Cria uma instância do DAO
+            ProdutoDAO produtoDAO = new ProdutoDAO();
+
+            // Atualiza no banco de dados
+            if (produtoDAO.atualizarProduto(produto)) {
+                // Atualiza a tabela na tela de listagem
+                if (TelaListagemProdutos.instancia != null) {
+                    TelaListagemProdutos.instancia.atualizarTabela();
+                }
+
+                JOptionPane.showMessageDialog(this, "Produto atualizado com sucesso!");
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar produto!", 
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Preço e quantidade devem ser valores numéricos válidos!", 
+                "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
 

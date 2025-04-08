@@ -29,28 +29,44 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
         atualizarTabela();
     }
     public void atualizarTabela() {
-        DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
-        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+    DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
+    modelo.setRowCount(0); // Limpa a tabela antes de atualizar
 
-        List<Produto> usuarios = dao.listarProdutos();
-        for (Produto u : usuarios) {
-            modelo.addRow(new Object[]{u.getId(), u.getNome(), u.getPreco(), u.getEstoque()});
+    List<Produto> produtos = dao.listarProdutos();
+    for (Produto p : produtos) {
+        // Obtém a quantidade do estoque se existir
+        int quantidade = (p.getEstoque() != null) ? p.getEstoque().getQuantidadeEstoque() : 0;
+        modelo.addRow(new Object[]{
+            p.getId(), 
+            p.getNome(), 
+            p.getPreco(), 
+            quantidade // Mostra apenas a quantidade em vez do objeto Estoque
+        });
+    }
+}
+
+private void filtrarProdutos() {
+    String filtro = txfFiltragem.getText().trim().toLowerCase();
+    DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
+    modelo.setRowCount(0); // Limpa a tabela antes de atualizar
+
+    List<Produto> produtos = dao.listarProdutos();
+
+    for (Produto p : produtos) {
+        if (p.getNome().toLowerCase().contains(filtro) || 
+            String.valueOf(p.getId()).contains(filtro)) {
+            
+            // Obtém a quantidade do estoque se existir
+            int quantidade = (p.getEstoque() != null) ? p.getEstoque().getQuantidadeEstoque() : 0;
+            modelo.addRow(new Object[]{
+                p.getId(), 
+                p.getNome(), 
+                p.getPreco(), 
+                quantidade // Mostra apenas a quantidade em vez do objeto Estoque
+            });
         }
     }
-
-    private void filtrarProdutos() {
-        String filtro = txfFiltragem.getText().trim().toLowerCase();
-        DefaultTableModel modelo = (DefaultTableModel) tabelaProdutos.getModel();
-        modelo.setRowCount(0); // Limpa a tabela antes de atualizar
-
-        List<Produto> produtos = ProdutoDAO.getListaProdutos();
-
-        for (Produto p : produtos) {
-            if (p.getNome().toLowerCase().contains(filtro) || String.valueOf(p.getId()).contains(filtro)) {
-                modelo.addRow(new Object[]{p.getId(), p.getNome(), p.getPreco(), p.getEstoque()});
-            }
-        }
-    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -136,7 +152,7 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
-                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txfFiltragem, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -187,12 +203,21 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         int linhaSelecionada = tabelaProdutos.getSelectedRow();
-    
-        if (linhaSelecionada != -1) {
-            Produto produtoSelecionado = ProdutoDAO.getListaProdutos().get(linhaSelecionada);
 
-            // Abre a tela de edição passando o produto
-            new TelaEdicaoProduto(produtoSelecionado, linhaSelecionada).setVisible(true);
+        if (linhaSelecionada != -1) {
+            // Obtém o ID do produto da linha selecionada
+            int idProduto = (int) tabelaProdutos.getValueAt(linhaSelecionada, 0);
+
+            // Busca o produto completo no banco de dados
+            Produto produtoSelecionado = dao.buscarProdutoPorId(idProduto);
+
+            if (produtoSelecionado != null) {
+                // Abre a tela de edição passando o produto
+                new TelaEdicaoProduto(produtoSelecionado).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Produto não encontrado.", 
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um produto para editar.");
         }
@@ -200,18 +225,25 @@ public class TelaListagemProdutos extends javax.swing.JFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         int linhaSelecionada = tabelaProdutos.getSelectedRow();
-        
+
         if (linhaSelecionada != -1) {
+            // Obtém o ID do produto da linha selecionada
+            int idProduto = (int) tabelaProdutos.getValueAt(linhaSelecionada, 0);
+
+            // Exibe caixa de diálogo de confirmação
             int confirmacao = JOptionPane.showConfirmDialog(this, 
                 "Tem certeza que deseja excluir este produto?", "Confirmação", 
                 JOptionPane.YES_NO_OPTION);
 
             if (confirmacao == JOptionPane.YES_OPTION) {
-                dao.removerProduto(linhaSelecionada);
-                
-                atualizarTabela();
-                
-                JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!");
+                // Remove o produto do banco de dados
+                if (dao.excluirProduto(idProduto)) {
+                    atualizarTabela(); // Atualiza a tabela após remoção
+                    JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao excluir produto.", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um produto para excluir.");

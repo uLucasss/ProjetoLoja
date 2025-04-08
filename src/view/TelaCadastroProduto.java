@@ -5,6 +5,7 @@
 package view;
 
 import javax.swing.JOptionPane;
+import model.Estoque;
 import model.Produto;
 import util.ProdutoDAO;
 
@@ -168,11 +169,10 @@ public class TelaCadastroProduto extends javax.swing.JFrame {
         String precoStr = txfPreco.getText().trim();
         String quantidadeStr = txfQuantidade.getText().trim();
 
-        
-
         // Validar campos obrigatórios
         if (nome.isEmpty() || precoStr.isEmpty() || quantidadeStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios!");
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos!", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -180,24 +180,40 @@ public class TelaCadastroProduto extends javax.swing.JFrame {
             double preco = Double.parseDouble(precoStr);
             int quantidade = Integer.parseInt(quantidadeStr);
 
-            // Criar novo produto
-            Produto novoProduto = new Produto(nome, preco, quantidade);
+            // Criar o produto (o ID pode ser gerado automaticamente ou vir de um campo)
+            Produto novoProduto = new Produto();
+            novoProduto.setNome(nome);
+            novoProduto.setPreco(preco);
+            // novoProduto.setId(...); // Se necessário definir o ID aqui
+
+            // Criar o estoque associado ao produto
+            Estoque estoque = new Estoque();
+            estoque.setQuantidadeEstoque(quantidade);
+            estoque.setProduto(novoProduto); // Associando o produto ao estoque
+
+            // Associar o estoque ao produto
+            novoProduto.setEstoque(estoque);
 
             // Adicionar ao DAO
             ProdutoDAO dao = new ProdutoDAO();
-            dao.adicionarProduto(novoProduto);
+            if (dao.cadastrarProduto(novoProduto)) {
+                JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
 
-            // Atualizar tabela na tela de listagem
-            if (TelaListagemProdutos.instancia != null) {
-                TelaListagemProdutos.instancia.atualizarTabela();
+                // Limpar os campos
+                txfNome.setText("");
+                txfPreco.setText("");
+                txfQuantidade.setText("");
+
+                // Atualizar tabela
+                if (TelaListagemProdutos.instancia != null) {
+                    TelaListagemProdutos.instancia.atualizarTabela();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
-
-            // Fechar a tela de cadastro
-            this.dispose();
-
-            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Insira valores numéricos válidos para preço e quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Insira valores numéricos válidos para preço e quantidade.", 
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
